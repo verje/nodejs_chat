@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body>
+
+<header>
+    <%- include('../partials/header'); %>
+</header>
+
+<main>
+    <div class="container" style="width: 30%; margin-top: 2rem; padding:30px">
+        <div class="row">
+            <div class="col-6">
+                <div class="row col-12">
+                    <h1 style="color: white;">Register</h1>
+                </div>
+                <div class="col-12">
+                    <div class="col-3 padding-5"><div class="dot square"></div></div>
+                    <div class="col-3 padding-5"><div class="dot rectangle"></div></div>
+                    <div class="col-3 padding-5"><div class="dot square"></div></div>
+                    <div class="col-3 padding-5"><div class="dot rectangle"></div></div>
+                    <div class="col-3"><div class="dot rectangle"></div></div>
+                    <div class="col-3"><div class="dot square"></div></div>
+                    <div class="col-3"><div class="dot rectangle"></div></div>
+                    <div class="col-3"><div class="dot square"></div></div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="">
+                    <div class="row align-content-center"><img id="profile_picture" class="avatar" src=" /images/avatars/default.png"></div>
+                    
+                    <div class="row align-content-center">
+                        <span id="info-uploading" style="font-size: small; color: rgb(228, 226, 222); padding: 5px 0;">
+                        
+                        </span>
+                    </div>
+                    
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+                        <div class="col-12">
+                            <div class="col-8">
+                                <label for="picture_avatar" class="actions-upload">Select a picture</label>
+                                <input type="file" name="photo" id="picture_avatar" onchange="checkPicture()" accept="image/png, image/jpeg, image/jpg">
+                            </div>
+                            <div class="col-4">
+                                <input type="submit" id="button-upload" class="btn-upload actions-upload" value="Upload">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>            
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <% if(locals.error_msg) { %>
+                    <div id="error_msg" class="row" style="text-align: center; font-size:small; color: red; padding: 5px;"><%= locals.error_msg %></div> 
+                <% } %>
+                <form class="" action="/register" id="chat-info" method="POST">
+                    <div class="row" style="margin-bottom: 20px;">
+                        <input class="input-nick w-100" type="text" name="nickname" id="nickname" placeholder="Nickname" autocomplete="off" value="<%= locals.nickname %>" required>
+                    </div>
+        
+                    <div class="row" style="margin-bottom: 20px;">
+                        <input class="input-nick w-100" type="password" name="password" id="password" placeholder="Password" required>
+                    </div>
+        
+                    <div class="row" style="margin-bottom: 20px;">
+                        <input class="input-nick w-100" type="password" name="re_password" id="re_password" placeholder="Confirm password" onFocus="clean_msg()" required>
+                    </div>            
+
+                    <input type="hidden" name="path_picture" value="/images/avatars/default.png">
+        
+                    <div class="row align-content-center" style="padding: 20px 0;">
+                        <input class="btn-login w-100" type="submit" value="Register">
+                    </div>
+        
+                    <div class="align-content-center" style="margin-top: 1rem;">
+                        <span style="color:rgb(58, 68, 114);">Already Registred? &nbsp;<a href="/">Login</a></span> 
+                    </div>            
+                </form>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer'); %>
+</footer>
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
+<script>
+    function checkPicture(){
+        var img_ok = 1;
+        var pic = document.getElementById("picture_avatar").files[0];
+        var pic_name = pic.name;
+        var ext = pic_name.split('.').pop().toLowerCase();
+        if (jQuery.inArray(ext, ['gif', 'png', 'jpg', 'jpeg']) == -1) {
+            img_ok = 0;
+            alert("Invalid image file")
+        }
+        var size = pic.size;
+        if (size > 2000000) {
+            img_ok = 0;
+            alert("Image File Size is too long");
+        }
+        if (img_ok == 1) {
+            if(pic_name.length > 27) pic_name = pic_name.substring(0,27) + "...";
+            $('#button-upload').prop('disabled', false);
+            $('#info-uploading').html(pic_name)  
+        }
+    }
+
+    function clean_msg(){
+        $("#error_msg").html('');
+    } 
+
+    $(document).ready(function() {
+       $('#uploadForm').submit(function() {
+          $(this).ajaxSubmit({
+                error: function(err) {
+                    status('Error: ' + err.status);
+                    $("#info-uploading").empty().text("Error uploading file");
+                },
+                success: function(response) {
+                    $('#info-uploading').empty().text("File Uploaded");
+                    $('input[name="path_picture"]').attr('value', '/images/avatars/' + response.originalname);
+                    $('#profile_picture').attr('src', '/images/avatars/' + response.originalname);
+                }
+            });
+        //Very important line, it disable the page refresh.
+        return false;
+      });    
+    });    
+
+</script>
+</html>

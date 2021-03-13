@@ -1,0 +1,69 @@
+<div class="row container padding-10 w-60" style="margin-top: 2rem;">
+    <div class="col-6">
+        <div class="container-login">
+            <div>
+                <% if(locals.msg) { %>
+                    <div id="msg" class="row" style="text-align: center; font-size:small; color: rgb(255, 255, 255); padding: 10px;">
+                        <%= locals.msg %>
+                    </div> 
+                <% } %>
+                <% if(locals.error_msg) { %>
+                    <div id="msg" class="row" style="text-align: center; font-size:small; color: rgb(175, 88, 88); padding: 10px;"><%= locals.error_msg %></div> 
+                <% } %>
+            </div>
+            <div>
+                <form class="" action="/chat" id="chat-info" method="post">
+                    <div class="row align-content-center padding-10">
+                        <input class="input-nick" type="text" id="nick" name="nickname" required placeholder="Type your Nickname">
+                    </div>
+                    <div class="row align-content-center padding-10">
+                        <input class="input-nick" type="password" id="password" name="password" required placeholder="Password" onfocus="clean_msg()"> 
+                    </div>
+                    <div class="align-content-center" style="margin-top: 1rem;"><label for="salas">Choose a Room:</label></div>
+                    <div class="row align-content-center">
+                        <select name="room" id="room">
+                            <option value="sala1">Sala 1</option>
+                            <option value="sala2">Sala 2</option>
+                            <option value="sala3">Sala 3</option>
+                            <option value="sala4">Sala 4</option>
+                        </select>
+                    </div>
+                    <div class="row padding-10 align-content-center" style="margin-top: 1rem;">
+                        <input class="btn-login" type="submit" value="Login">
+                    </div>
+            
+                    <div class="align-content-center" style="margin-top: 1rem;">
+                        <span style="color:rgb(58, 68, 114);">Not Registred? &nbsp;<a href="/register">Sign up for free</a></span> 
+                    </div>            
+                </form>
+            </div>
+            <div></div>
+        </div>
+
+    </div>
+    <div class="col-6 align-content-center">
+        <img src="images/login.png" style="border-radius: 1rem;">
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+
+<script>
+    function clean_msg(){
+        $("#msg").html('');
+    } 
+
+    $('#chat-info').one('submit', function(e){
+        e.preventDefault();
+        var nick = $('#nick');
+        var room = $('#room');
+        if(nick.val() && room.val()) {
+            localStorage.setItem("nickname", nick.val());
+            localStorage.setItem("chat-room", room.val());
+            $(this).submit(); 
+        }     
+        
+    });
+</script>
